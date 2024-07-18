@@ -6,15 +6,12 @@
         {
             string pattern = "";
             int repeatCount = 0;
-            bool patternDetected = false;
 
             string text = EnterString();
 
-            List<int> multiple = DivideStringInParts(text.Length);
+            DetectPattern(text, out pattern, out repeatCount);
 
-            patternDetected = DetectPattern(text, multiple, out pattern, out repeatCount);
-
-            Console.WriteLine(ShowResult(patternDetected, pattern, repeatCount));
+            Console.WriteLine(ShowResult(pattern, repeatCount));
 
 
 
@@ -33,49 +30,36 @@
                 return text;
             }
 
-            List<int> DivideStringInParts(int textLength)
+            void DetectPattern(string text, out string pattern, out int repeatCount)
             {
-                List<int> multiple = new List<int>();
+                int textLength = text.Length;
 
-                for (int i = 2; i <= textLength; i++)
+                for (repeatCount = textLength; repeatCount > 1 ; repeatCount--)
                 {
-                    if (textLength % i == 0)
+                    if (textLength % repeatCount == 0)
                     {
-                        multiple.Add(i);
+                        pattern = text.Substring(0, textLength / repeatCount);
+                        string str = "";
+
+                        for (int steps = 1; steps <= repeatCount; steps++)
+                        {
+                            str += pattern;
+                        }
+
+                        if (str == text)
+                        {
+                            return;
+                        }
                     }
                 }
 
-                return multiple;
-            }
-
-            bool DetectPattern(string text, List<int> multiple, out string pattern, out int repeatCount)
-            {
                 pattern = "";
                 repeatCount = 0;
-
-                for (int i = multiple.Count - 1; i >= 0; i--)
-                {
-                    pattern = text.Substring(0, text.Length / multiple[i]);
-                    string str = "";
-
-                    for (int j = 1; j <= multiple[i]; j++)
-                    {
-                        str += pattern;
-                    }
-
-                    if (str == text)
-                    {
-                        repeatCount = multiple[i];
-                        return true;
-                    }
-                }
-
-                return false;
             }
 
-            string ShowResult(bool patternDetected, string pattern, int repeatCount)
+            string ShowResult(string pattern, int repeatCount)
             {
-                if (patternDetected)
+                if (repeatCount != 0)
                 {
                     return $"\nThe following pattern has been detected:\n{pattern}\n\nThe pattern repeats itself {repeatCount} times in the given string.";
                 }
